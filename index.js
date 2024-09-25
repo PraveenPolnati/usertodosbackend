@@ -90,7 +90,7 @@ const authenticateToken = (req, res, next) => {
         if (err) {
             return res.status(403).json({ success: false, message: 'Invalid token.' });
         }
-        req.user = user;
+        req.user = { id: user.id, email: user.email };
         console.log(user)
         next(); 
     });
