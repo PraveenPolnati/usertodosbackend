@@ -100,8 +100,8 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
     try {
         const taskId = uuidv4();
-        await db.run('INSERT INTO tasks (id, title, description, completed) VALUES (?, ?, ?, ?)', 
-            [taskId, title, description, false]);
+        await db.run('INSERT INTO tasks (id, title, description, completed,user_email) VALUES (?, ?, ?, ?)', 
+            [taskId, title, description, false,req.user.email]);
 
         return res.status(201).json({ success: true, message: 'Task created successfully.', taskId });
     } catch (error) {
