@@ -36,7 +36,7 @@ app.post('/auth/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        const existingUser = await db.get('SELECT * FROM users WHERE user_email = ?', [email]);
+        const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [email]);
 
         if (existingUser) {
             return res.status(400).json({ success: false, message: 'User already exists.' });
@@ -112,7 +112,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
 app.get('/api/tasks', authenticateToken, async (req, res) => {
     try {
-        const tasks = await db.all('SELECT * FROM tasks WHERE email = ?',[req.user.email]);
+        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?',[req.user.email]);
         return res.status(200).json({ tasks });
     } catch (error) {
         console.error('Error fetching tasks:', error);
