@@ -91,6 +91,7 @@ const authenticateToken = (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Invalid token.' });
         }
         req.user = user;
+        console.log(user)
         next(); 
     });
 };
@@ -100,7 +101,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
     try {
         const taskId = uuidv4();
-        await db.run('INSERT INTO tasks (id, title, description, completed,user_email) VALUES (?, ?, ?, ?)', 
+        await db.run('INSERT INTO tasks (id, title, description, completed,user_email) VALUES (?, ?, ?, ?,?)', 
             [taskId, title, description, false,req.user.email]);
 
         return res.status(201).json({ success: true, message: 'Task created successfully.', taskId });
@@ -112,13 +113,14 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
 app.get('/api/tasks', authenticateToken, async (req, res) => {
     try {
-        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?',[req.user.email]);
+        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?', [req.user.email]);        
         return res.status(200).json({ tasks });
     } catch (error) {
         console.error('Error fetching tasks:', error);
         return res.status(500).json({ success: false, message: 'Server error' });
-    }
+    }``
 });
+
 
 app.put('/api/tasks/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
