@@ -113,6 +113,7 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
 app.get('/api/tasks', authenticateToken, async (req, res) => {
     const {email} = req.user
+    console.log(email)
     try {
         const tasks = await db.all('SELECT * FROM tasks');        
         return res.status(200).json({ tasks });
