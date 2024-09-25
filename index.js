@@ -112,8 +112,9 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/tasks', authenticateToken, async (req, res) => {
+    const {email} = req.user
     try {
-        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?', [req.user.email]);        
+        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?', [email]);        
         return res.status(200).json({ tasks });
     } catch (error) {
         console.error('Error fetching tasks:', error);
