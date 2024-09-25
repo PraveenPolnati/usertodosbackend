@@ -36,7 +36,7 @@ app.post('/auth/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        const existingUser = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+        const existingUser = await db.get('SELECT * FROM users WHERE user_email = ?', [email]);
 
         if (existingUser) {
             return res.status(400).json({ success: false, message: 'User already exists.' });
