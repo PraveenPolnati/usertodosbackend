@@ -69,7 +69,7 @@ app.post('/auth/login', async (req, res) => {
             return res.status(401).json({ success:false, message: 'Password is wrong.' });
         }
 
-        const token = jwt.sign({ id: user.id }, 'todos'); 
+        const token = jwt.sign({email:email,id:user.id }, 'todos'); 
 
         return res.status(200).json({ success:true,token });
     } catch (error) {
@@ -90,15 +90,14 @@ const authenticateToken = (req, res, next) => {
         if (err) {
             return res.status(403).json({ success: false, message: 'Invalid token.' });
         }
-        req.user = { id: user.id, email: user.email };
-        console.log(user)
+        req.user = user;
+        console.log(req.user)
         next(); 
     });
 };
 
 app.post('/api/tasks', authenticateToken, async (req, res) => {
     const { title, description } = req.body;
-
     try {
         const taskId = uuidv4();
         await db.run('INSERT INTO tasks (id, title, description, completed,user_email) VALUES (?, ?, ?, ?,?)', 
@@ -113,10 +112,8 @@ app.post('/api/tasks', authenticateToken, async (req, res) => {
 
 app.get('/api/tasks', authenticateToken, async (req, res) => {
     const {email} = req.user
-    console.log(re.user)
-    console.log("4")
     try {
-        const tasks = await db.all('SELECT * FROM tasks');        
+        const tasks = await db.all('SELECT * FROM tasks WHERE user_email = ?',[email]);        
         return res.status(200).json({ tasks });
     } catch (error) {
         console.error('Error fetching tasks:', error);
